@@ -1,0 +1,22 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "discord bot made by pablosz",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "keywords": [
+    "discord",
+    "eternal",
+    "bot"
+  ],
+  "author": "pablosz",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.1.5",
+    "google-spreadsheet": "^2.0.3",
+    "lodash": "^4.17.4",
+    "nodemon": "^1.11.0"
+  }
+}
