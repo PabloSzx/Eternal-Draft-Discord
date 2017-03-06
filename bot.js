@@ -2,7 +2,6 @@ var Discordie = require('discordie');
 var GoogleSpreadsheet = require('google-spreadsheet');
 var async = require('async');
 var _ = require('lodash');
-// import env from 'process-env';
 
 
 const Events = Discordie.Events;
@@ -10,7 +9,6 @@ const client = new Discordie();
 
 var doc = new GoogleSpreadsheet('1I8dd8t7gZgA3s-E2vMhgz2jzEPk9dQ_rhkW3i0Xpb40');
 var sheet;
-// var conversation = false;
 var conversation = {}
 
 let tier = {
@@ -38,16 +36,13 @@ async.series([
     });
   },
   function workingWithRows(step) {
-    // google provides some query options
     sheet.getRows({
       offset: 1,
       limit: 130,
       orderby: 'col2'
     }, function( err, rows ){
       _.map(rows, (value, key) => {
-        // console.log(key);
         _.map(value, (name, header) => {
-          // console.log(header);
           if (name) {
             switch (header) {
               case 's':
@@ -108,15 +103,14 @@ client.Dispatcher.on(Events.GATEWAY_READY, e => {
 });
 
 client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
-  // console.log(process.env.eternalesptoken);
   let user = e.message.author.username;
-  console.log('El usuario ' + user + 'ha interactuado conmigo.');
   if (!conversation[user]) {
     conversation[user] = { bool: false };
   }
   const content = e.message.content;
   let msg = '';
   if((e.message.content.substring(0, 6) == '!draft')) {
+    console.log('El usuario ' + user + ' ha interactuado conmigo.');
     const name = content.substring(7).trim();
     let classification = '';
     if (conversation[user].bool) {
@@ -168,8 +162,6 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
             err = true;
         }
       } catch (e) {
-        // console.log('entro acá');
-        // console.log(e);
         msg = 'La alternativa ingresada no coincide con ninguna de las alternativas.'
         err = true;
       }
