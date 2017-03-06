@@ -100,7 +100,8 @@ async.series([
 
 client.connect({
   // token: 'Mjg3NzczODQ0OTMwODIyMTQ0.C50J1g.Ghuj21Hqv36Wk3HcWXQ2I9U5aUo'   //Este token es para el server de test
-  token: 'Mjg3OTc0MzMzNTU5ODY1MzQ1.C53Ehg.GWkRXKlmZguYZ6MbA6Ga0WS3ncg'    //Este token es para eternal-esp
+  // token: 'Mjg3OTc0MzMzNTU5ODY1MzQ1.C53Ehg.GWkRXKlmZguYZ6MbA6Ga0WS3ncg'    //Este token es para eternal-esp
+  token: process.env.eternalesptoken
 });
 
 client.Dispatcher.on(Events.GATEWAY_READY, e => {
@@ -108,8 +109,9 @@ client.Dispatcher.on(Events.GATEWAY_READY, e => {
 });
 
 client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
-  console.log(process.env.eternalesptoken);
+  // console.log(process.env.eternalesptoken);
   let user = e.message.author.username;
+  console.log('El usuario ' + user + 'ha interactuado conmigo.');
   if (!conversation[user]) {
     conversation[user] = { bool: false };
   }
@@ -162,12 +164,12 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
             msg = "La clasificacion de la carta \'" + conversation[user].possibilities[9].card + "\' es: " + classification.replace(/1/gi,'+').replace(/2/gi,'').replace(/3/gi,'-').toUpperCase();
             break;
           default:
-            msg = 'No se reconoció digito ingresado'
+            msg = 'Debiste escoger una alternativa de las dadas anteriormente, por ejemplo \"!draft 1\".'
         }
       } catch (e) {
         // console.log('entro acá');
         // console.log(e);
-        msg = 'No se reconoció digito ingresado'
+        msg = 'La alternativa ingresada no coincide con ninguna de las alternativas.'
       }
       msg = extraClassification(classification, msg);
       e.message.channel.sendMessage(msg);
