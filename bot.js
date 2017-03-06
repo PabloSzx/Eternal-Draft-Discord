@@ -100,8 +100,7 @@ async.series([
 
 client.connect({
   // token: 'Mjg3NzczODQ0OTMwODIyMTQ0.C50J1g.Ghuj21Hqv36Wk3HcWXQ2I9U5aUo'   //Este token es para el server de test
-  // token: 'Mjg3OTc0MzMzNTU5ODY1MzQ1.C53Ehg.GWkRXKlmZguYZ6MbA6Ga0WS3ncg'    //Este token es para eternal-esp
-  token: process.env.eternalesptoken
+  token: process.env.eternalesptoken //Este token es para el server de Eternal-ESP
 });
 
 client.Dispatcher.on(Events.GATEWAY_READY, e => {
@@ -121,6 +120,7 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
     const name = content.substring(7).trim();
     let classification = '';
     if (conversation[user].bool) {
+      let err = false;
       try {
         switch (name.trim()) {
           case '1':
@@ -164,21 +164,21 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
             msg = "La clasificacion de la carta \'" + conversation[user].possibilities[9].card + "\' es: " + classification.replace(/1/gi,'+').replace(/2/gi,'').replace(/3/gi,'-').toUpperCase();
             break;
           default:
-            msg = 'Debiste escoger una alternativa de las dadas anteriormente, por ejemplo \"!draft 1\".'
+            msg = 'ERROR, Debes escoger una alternativa de las dadas anteriormente, por ejemplo \"!draft 1\".'
+            err = true;
         }
       } catch (e) {
         // console.log('entro acá');
         // console.log(e);
         msg = 'La alternativa ingresada no coincide con ninguna de las alternativas.'
+        err = true;
       }
       msg = extraClassification(classification, msg);
       e.message.channel.sendMessage(msg);
-      conversation[user].bool = false;
-
-
+      if (!err) {
+        conversation[user].bool = false;
+      }
     } else {
-
-
     if (!content.substring(7).trim()) {
         e.message.channel.sendMessage('Buenas, soy el bot :robot: Tier-Draft para Eternal, puedes preguntar la clasificación de cualquier carta escribiendo \"!draft torch\" por ejemplo.' +
         '\n\nLas clasificación de tier para las cartas van de forma descendente desde S :scream:, hasta A+, A, A-, B+, B, B-, C+, C, C-, D, hasta F (Evita a toda costa elegir estas cartas :joy:)'
