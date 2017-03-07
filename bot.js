@@ -270,7 +270,7 @@ function extraClassification(classification, msg) {
   let extra = msg;
   switch (classification) {
     case 's':
-      extra = extra + '\n\n:ok_hand: Mas te vale que eligas esa carta :ok_hand:'
+      extra = extra + '\n\n:ok_hand: Mas te vale que elijas esa carta :ok_hand:'
       break;
     case 'a1':
 
