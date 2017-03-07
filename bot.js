@@ -9,7 +9,9 @@ const client = new Discordie();
 
 var doc = new GoogleSpreadsheet('1I8dd8t7gZgA3s-E2vMhgz2jzEPk9dQ_rhkW3i0Xpb40');
 var sheet;
-var conversation = {}
+var conversation = {};
+var history = {};
+var lastPerson = '';
 
 let tier = {
 s: [],
@@ -102,16 +104,44 @@ client.Dispatcher.on(Events.GATEWAY_READY, e => {
   console.log('Conectado como: ' + client.User.username);
 });
 
+client.Dispatcher.on(Events.TYPING_START, e => {
+  const user = e.user.username;
+  if (history[user] === undefined) {
+    history[user] = false;
+    console.log('Registro de usuarios incrementado.');
+    console.log(history);
+  }
+  if (e.channel.isPrivate && (history[user] === false)) {
+    console.log(user + ' ha conversado conmigo en privado por primera vez.');
+    e.channel.sendMessage('Hola! :wave: Al conversar conmigo por mensaje privado ' +
+    'no es necesario que me preguntes por las cartas antecediendo un \"!draft\", aqui ' +
+    'puedes escribir directamente la carta y te dire la clasificacion personalmente. \n\n' +
+    'Y las clasificaciones de tier para las cartas van de forma descendente desde S :scream:, ' +
+    'hasta A+, A, A-, B+, B, B-, C+, C, C-, D, hasta F (Evita a toda costa elegir estas cartas :joy:)');
+    history[user] = true;
+  }
+});
+
 client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
   let user = e.message.author.username;
+  if (user !== 'Eternal-Draft') {
+
   if (!conversation[user]) {
     conversation[user] = { bool: false };
   }
   const content = e.message.content;
   let msg = '';
-  if((e.message.content.substring(0, 6) == '!draft')) {
-    console.log('El usuario ' + user + ' ha interactuado conmigo.');
-    const name = content.substring(7).trim();
+  if((e.message.content.substring(0, 6) == '!draft') || e.message.isPrivate)  {
+    if (user !== lastPerson) {
+      lastPerson = user;
+      console.log('El usuario ' + user + ' ha interactuado conmigo.');
+    }
+    let name = '';
+    if (e.message.content.substring(0, 6) == '!draft') {
+      name = content.substring(7).trim();
+    } else {
+      name = content.trim();
+    }
     let classification = '';
     if (conversation[user].bool) {
       let err = false;
@@ -158,7 +188,11 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
             msg = "La clasificacion de la carta \'" + conversation[user].possibilities[9].card + "\' es: " + classification.replace(/1/gi,'+').replace(/2/gi,'').replace(/3/gi,'-').toUpperCase();
             break;
           default:
-            msg = 'ERROR, Debes escoger una alternativa de las dadas anteriormente, por ejemplo \"!draft 1\".'
+            if (e.message.isPrivate) {
+              msg = 'ERROR, Debes escoger una alternativa de las dadas anteriormente, por ejemplo \"1\".'
+            } else {
+              msg = 'ERROR, Debes escoger una alternativa de las dadas anteriormente, por ejemplo \"!draft 1\".'
+            }
             err = true;
         }
       } catch (e) {
@@ -171,7 +205,7 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
         conversation[user].bool = false;
       }
     } else {
-    if (!content.substring(7).trim()) {
+    if (!name) {
         e.message.channel.sendMessage('Buenas, soy el bot :robot: Tier-Draft para Eternal, puedes preguntar la clasificación de cualquier carta escribiendo \"!draft torch\" por ejemplo.' +
         '\n\nLas clasificación de tier para las cartas van de forma descendente desde S :scream:, hasta A+, A, A-, B+, B, B-, C+, C, C-, D, hasta F (Evita a toda costa elegir estas cartas :joy:)'
       );
@@ -198,7 +232,11 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
             resolve(msg);
           }
           else if (Object.keys(possibilities).length > 1) {
-            msg = 'Hay ' + Object.keys(possibilities).length + ' coincidencias con la palabra indicada, elige entre las siguientes opciones escribiendome el numero correspondiente, por ejemplo, \"!draft 1\".\n\n';
+            if (e.message.isPrivate) {
+              msg = 'Hay ' + Object.keys(possibilities).length + ' coincidencias con la palabra indicada, elige entre las siguientes opciones escribiendome el numero correspondiente, por ejemplo, \"1\".\n\n';
+            } else {
+              msg = 'Hay ' + Object.keys(possibilities).length + ' coincidencias con la palabra indicada, elige entre las siguientes opciones escribiendome el numero correspondiente, por ejemplo, \"!draft 1\".\n\n';
+            }
             _.map(possibilities, (value, key) => {
                 msg = msg + (parseInt(key) + 1).toString() + '.- ' + value.card + '\n';
             });
@@ -224,6 +262,8 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
   }
 
   }
+
+}
 });
 
 function extraClassification(classification, msg) {
