@@ -10,7 +10,19 @@ const client = new Discordie();
 var doc = new GoogleSpreadsheet('1I8dd8t7gZgA3s-E2vMhgz2jzEPk9dQ_rhkW3i0Xpb40');
 var sheet;
 var conversation = {};
-var history = {};
+var history = {
+PabloSz: true,
+EpithSlayer: false,
+Sneaky: false,
+Krow: true,
+Amsenx: false,
+mishiDsD: false,
+Jopraris: false ,
+Licorcafe: true
+};
+
+
+
 var lastPerson = '';
 
 let tier = {
@@ -27,6 +39,10 @@ c3: [],
 d: [],
 f: []
 };
+
+let emotes = {
+  kappa: '<:Kappa:288704373775663105>'
+}
 
 async.series([
   function getInfoAndWorksheets(step) {
@@ -261,7 +277,9 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
   }
   }
 
-  }
+} else if(content.trim() === emotes.kappa) {
+  e.message.channel.sendMessage(emotes.kappa);
+}
 
 }
 });
