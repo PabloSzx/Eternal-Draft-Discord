@@ -41,7 +41,13 @@ f: []
 };
 
 let emotes = {
-  kappa: '<:Kappa:288704373775663105>'
+  kappa: '<:Kappa:288704373775663105>',
+  kappagold: '<:kappagold:288743665889968138>',
+  keepo: '<:keepo:288743731199475713>',
+  kappahd: '<:kappahd:288743688547336212>',
+  kappapride: '<:kappapride:288743705328877568>',
+  pogchamp: '<:pogchamp:288744062679252992>',
+  dududu: '<:dududu:288743426160328706>'
 }
 
 async.series([
@@ -278,7 +284,28 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
   }
 
 } else if(content.trim() === emotes.kappa) {
-  e.message.channel.sendMessage(emotes.kappa);
+  const rng = Math.floor((Math.random() * 5));
+  let emote = emotes.pogchamp;
+  switch (rng) {
+    case 0:
+      emote = emotes.kappa;
+      break;
+    case 1:
+      emote = emotes.kappagold;
+      break;
+    case 2:
+      emote = emotes.keepo;
+      break;
+    case 3:
+      emote = emotes.kappahd;
+      break;
+    case 4:
+      emote = emotes.kappapride;
+      break;
+    default:
+      //empty
+  }
+  e.message.channel.sendMessage(emote);
 }
 
 }
