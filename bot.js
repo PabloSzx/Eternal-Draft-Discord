@@ -12,13 +12,10 @@ var sheet;
 var conversation = {};
 var history = {
 PabloSz: true,
-EpithSlayer: false,
-Sneaky: false,
+EpithSlayer: true,
+Licorcafe: true,
 Krow: true,
-Amsenx: false,
-mishiDsD: false,
-Jopraris: false ,
-Licorcafe: true
+Punisher232: true
 };
 
 
@@ -130,8 +127,8 @@ client.Dispatcher.on(Events.TYPING_START, e => {
   const user = e.user.username;
   if (history[user] === undefined) {
     history[user] = false;
-    console.log('Registro de usuarios incrementado.');
-    console.log(history);
+    // console.log('Registro de usuarios incrementado.');
+    // console.log(history);
   }
   if (e.channel.isPrivate && (history[user] === false)) {
     console.log(user + ' ha conversado conmigo en privado por primera vez.');
@@ -147,11 +144,13 @@ client.Dispatcher.on(Events.TYPING_START, e => {
 client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
   let user = e.message.author.username;
   if (user !== 'Eternal-Draft') {
-
+    const content = e.message.content;
+  if (e.message.isPrivate && (content === 'PING')) {
+    console.log('PONG');
+  } else if (user !== 'Eternal-Decks') {
   if (!conversation[user]) {
     conversation[user] = { bool: false };
   }
-  const content = e.message.content;
   let msg = '';
   if((e.message.content.substring(0, 6) == '!draft') || e.message.isPrivate)  {
     if (user !== lastPerson) {
@@ -307,7 +306,11 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
   }
   e.message.channel.sendMessage(emote);
 }
+if (content.trim().toLowerCase().indexOf('kappa') !== -1) {
+  e.message.addReaction({id: '288704373775663105', name: 'Kappa'});
+}
 
+}
 }
 });
 
