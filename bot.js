@@ -147,6 +147,7 @@ client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
     const content = e.message.content;
   if (e.message.isPrivate && (content === 'PING')) {
     console.log('PONG');
+    e.message.channel.sendMessage('PONG');
   } else if (user !== 'Eternal-Decks') {
   if (!conversation[user]) {
     conversation[user] = { bool: false };
