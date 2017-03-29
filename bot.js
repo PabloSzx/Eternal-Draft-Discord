@@ -141,7 +141,31 @@ client.Dispatcher.on(Events.TYPING_START, e => {
   }
 });
 
+
 client.Dispatcher.on(Events.MESSAGE_CREATE, e => {
+  //Esta es la parte para el comando clear
+
+  try {
+  var member = e.message.member;
+  const roleNames = member.roles.map(role => role.name);
+  _.map(roleNames, (name) => {
+    if (name.toLowerCase() === 'admin') {
+      if (e.message.content.substring(0, 6).trim() === '!clear') {
+        let a = parseInt(e.message.content.substring(6).trim()) + 1;
+        const length = deletedFilter(client.Messages.forChannel(e.message.channel_id)).length;
+        for (var i = length - 1; i >= length - a; i--) {
+          if (!(deletedFilter(client.Messages.forChannel(e.message.channel_id))[i].pinned)) {
+            client.Messages.deleteMessage(deletedFilter(client.Messages.forChannel(e.message.channel_id))[i].id, e.message.channel_id)
+          }
+        }
+      }
+    }
+  } )
+
+} catch (e) {
+  console.error(e);
+}
+  //Esta es la parte para draft
   let user = e.message.author.username;
   if (user !== 'Eternal-Draft') {
     const content = e.message.content;
@@ -359,4 +383,14 @@ function extraClassification(classification, msg) {
   }
 
   return extra;
+}
+
+function deletedFilter(array) {
+  let returnedArray = [];
+  for (var i = 0; i < array.length; i++) {
+    if (!array[i].deleted) {
+      returnedArray[returnedArray.length] = array[i];
+    }
+  }
+  return returnedArray;
 }
